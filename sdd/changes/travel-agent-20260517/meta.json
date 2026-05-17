@@ -1,0 +1,13 @@
+{
+  "change_id": "travel-agent-20260517",
+  "created_at": "2026-05-17T00:00:00Z",
+  "phases": {
+    "product": "completed",
+    "design": "pending",
+    "test_design": "pending",
+    "implementation": "pending",
+    "code_review": "pending",
+    "test_execution": "pending"
+  },
+  "current_phase": "design"
+}

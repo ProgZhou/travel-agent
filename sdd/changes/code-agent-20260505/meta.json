@@ -1,0 +1,13 @@
+{
+  "change_id": "code-agent-20260505",
+  "created_at": "2026-05-05T08:09:43Z",
+  "phases": {
+    "product": "pending",
+    "design": "pending",
+    "test_design": "pending",
+    "implementation": "pending",
+    "code_review": "pending",
+    "test_execution": "pending"
+  },
+  "current_phase": "product"
+}

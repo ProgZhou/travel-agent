@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旅行规划 Agent - 交互原型</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a2b3c; line-height: 1.6; }
+
+/* Tab Navigation */
+.tab-nav { display: flex; background: #fff; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 100; overflow-x: auto; }
+.tab-btn { padding: 12px 16px; border: none; background: none; cursor: pointer; font-size: 13px; color: #64748b; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
+.tab-btn:hover { color: #0891b2; background: #f0fdfa; }
+.tab-btn.active { color: #0891b2; border-bottom-color: #0891b2; font-weight: 600; }
+
+/* Page Container */
+.page { display: none; max-width: 420px; margin: 0 auto; min-height: calc(100vh - 50px); background: #fff; position: relative; }
+.page.active { display: flex; flex-direction: column; }
+
+/* Status Bar */
+.status-bar { background: linear-gradient(135deg, #0891b2, #06b6d4); color: #fff; padding: 12px 16px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #a7f3d0; animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+/* Chat Area */
+.chat-area { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 85%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.msg-agent { align-self: flex-start; background: #f1f5f9; border-bottom-left-radius: 4px; color: #334155; }
+.msg-user { align-self: flex-end; background: #0891b2; color: #fff; border-bottom-right-radius: 4px; }
+
+/* Input Bar */
+.input-bar { display: flex; padding: 12px; gap: 8px; border-top: 1px solid #e2e8f0; background: #fff; }
+.input-bar input { flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 20px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.input-bar input:focus { border-color: #0891b2; }
+.input-bar button { padding: 10px 18px; background: #0891b2; color: #fff; border: none; border-radius: 20px; font-size: 14px; cursor: pointer; transition: background 0.2s; }
+.input-bar button:hover { background: #0e7490; }
+
+/* Destination Cards */
+.card-group { display: flex; flex-direction: column; gap: 12px; width: 100%; padding: 4px 0; }
+.dest-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: box-shadow 0.2s; }
+.dest-card:hover { box-shadow: 0 4px 16px rgba(8,145,178,0.12); }
+.dest-card h3 { font-size: 16px; color: #0e7490; margin-bottom: 4px; }
+.dest-card .reason { font-size: 13px; color: #64748b; margin-bottom: 12px; }
+.card-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.card-info-item { background: #f8fafc; padding: 8px 10px; border-radius: 8px; font-size: 12px; }
+.card-info-item .label { color: #94a3b8; display: block; margin-bottom: 2px; }
+.card-info-item .value { color: #1e293b; font-weight: 500; }
+.card-total { background: #f0fdfa; padding: 8px 12px; border-radius: 8px; font-size: 13px; color: #0e7490; font-weight: 600; margin-bottom: 12px; text-align: center; }
+.btn-select { width: 100%; padding: 10px; background: #0891b2; color: #fff; border: none; border-radius: 10px; font-size: 14px; cursor: pointer; transition: background 0.2s; }
+.btn-select:hover { background: #0e7490; }
+
+/* Itinerary Timeline */
+.itinerary-container { flex: 1; overflow-y: auto; padding: 16px; }
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
+.timeline-item { position: relative; margin-bottom: 20px; }
+.timeline-item::before { content: ''; position: absolute; left: -20px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: #0891b2; border: 2px solid #fff; box-shadow: 0 0 0 2px #0891b2; }
+.timeline-item.transport::before { background: #f59e0b; box-shadow: 0 0 0 2px #f59e0b; }
+.timeline-item.hotel::before { background: #8b5cf6; box-shadow: 0 0 0 2px #8b5cf6; }
+.tl-card { background: #f8fafc; border-radius: 12px; padding: 12px 14px; border: 1px solid #e2e8f0; }
+.tl-card h4 { font-size: 14px; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.tl-card p { font-size: 13px; color: #64748b; margin-bottom: 4px; }
+.tl-card .price { color: #0891b2; font-weight: 600; }
+.day-title { font-size: 15px; font-weight: 600; color: #1e293b; margin-bottom: 8px; }
+.activity-list { list-style: none; }
+.activity-list li { font-size: 13px; color: #475569; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; display: flex; justify-content: space-between; }
+.activity-list li:last-child { border-bottom: none; }
+.cost-summary { background: linear-gradient(135deg, #f0fdfa, #ecfeff); border-radius: 12px; padding: 14px; margin-top: 16px; border: 1px solid #a7f3d0; }
+.cost-summary h4 { font-size: 14px; color: #0e7490; margin-bottom: 8px; }
+.cost-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; color: #475569; }
+.cost-row.total { font-weight: 700; color: #0e7490; font-size: 15px; border-top: 1px solid #a7f3d0; padding-top: 8px; margin-top: 4px; }
+.action-buttons { display: flex; gap: 10px; padding: 16px; border-top: 1px solid #e2e8f0; background: #fff; }
+.btn-primary { flex: 1; padding: 12px; background: #0891b2; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; }
+.btn-primary:hover { background: #0e7490; }
+.btn-secondary { flex: 1; padding: 12px; background: #f1f5f9; color: #475569; border: none; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; }
+.btn-secondary:hover { background: #e2e8f0; }
+
+/* Booking Progress */
+.booking-container { flex: 1; overflow-y: auto; padding: 16px; }
+.progress-bar { background: #e2e8f0; border-radius: 8px; height: 8px; margin-bottom: 8px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #0891b2, #06b6d4); border-radius: 8px; transition: width 0.5s ease; }
+.progress-text { font-size: 12px; color: #64748b; margin-bottom: 16px; text-align: center; }
+.booking-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 12px; transition: all 0.3s; }
+.booking-item.current { border-color: #0891b2; background: #ecfeff; box-shadow: 0 2px 12px rgba(8,145,178,0.1); }
+.booking-item.done { border-color: #a7f3d0; background: #f0fdf4; }
+.booking-item.skipped { opacity: 0.6; }
+.booking-item h4 { font-size: 14px; color: #1e293b; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.booking-item .detail { font-size: 12px; color: #64748b; margin-bottom: 10px; }
+.booking-item .status-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+.badge-pending { background: #fef3c7; color: #92400e; }
+.badge-done { background: #d1fae5; color: #065f46; }
+.badge-skipped { background: #f1f5f9; color: #64748b; }
+.booking-actions { display: flex; gap: 8px; margin-top: 10px; }
+.booking-actions button { padding: 8px 14px; border-radius: 8px; font-size: 13px; border: none; cursor: pointer; transition: background 0.2s; }
+.btn-book { background: #0891b2; color: #fff; }
+.btn-book:hover { background: #0e7490; }
+.btn-paid { background: #10b981; color: #fff; }
+.btn-paid:hover { background: #059669; }
+.btn-skip { background: #f1f5f9; color: #64748b; }
+.btn-skip:hover { background: #e2e8f0; }
+
+/* Complete Page */
+.complete-container { flex: 1; overflow-y: auto; padding: 16px; text-align: center; }
+.complete-icon { font-size: 48px; margin: 20px 0 12px; }
+.complete-title { font-size: 20px; font-weight: 600; color: #0e7490; margin-bottom: 8px; }
+.complete-subtitle { font-size: 14px; color: #64748b; margin-bottom: 24px; }
+.summary-list { text-align: left; background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.summary-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+.summary-item:last-child { border-bottom: none; }
+.summary-item .name { display: flex; align-items: center; gap: 8px; color: #334155; }
+.summary-item .cost { color: #0e7490; font-weight: 500; }
+.check-icon { color: #10b981; }
+.skip-icon { color: #94a3b8; }
+.total-box { background: linear-gradient(135deg, #0891b2, #06b6d4); color: #fff; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+.total-box .label { font-size: 13px; opacity: 0.8; }
+.total-box .amount { font-size: 28px; font-weight: 700; }
+
+/* Responsive */
+@media (min-width: 768px) {
+  .page { max-width: 420px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; min-height: calc(100vh - 50px); }
+}
+</style>
+</head>
+<body>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="chat">1. 对话界面</button>
+  <button class="tab-btn" data-tab="recommend">2. 目的地推荐</button>
+  <button class="tab-btn" data-tab="itinerary">3. 行程表</button>
+  <button class="tab-btn" data-tab="booking">4. 预订引导</button>
+  <button class="tab-btn" data-tab="complete">5. 预订完成</button>
+</nav>
+
+<!-- Page 1: Chat Interface -->
+<div class="page active" id="page-chat">
+  <div class="status-bar"><span class="status-dot"></span>正在收集您的出行需求...</div>
+  <div class="chat-area" id="chat-messages">
+    <div class="msg msg-agent">你好！我是你的旅行规划助手。告诉我你的出行计划吧，比如想去哪里、什么时候、预算多少？</div>
+    <div class="msg msg-user">五一假期想去海边玩，预算5000左右，从北京出发</div>
+    <div class="msg msg-agent">收到！让我帮你整理一下：<br><br>- 出行时间：5月1日-5月5日（5天4晚）<br>- 预算：5000元<br>- 偏好：海边<br>- 出发地：北京<br><br>还有其他偏好吗？比如想要人少的地方，或者有特别想体验的活动？</div>
+    <div class="msg msg-user">想要人少一点，可以潜水的</div>
+    <div class="msg msg-agent">明白了！正在为你搜索合适的目的地，请稍等...</div>
+  </div>
+  <div class="input-bar">
+    <input type="text" id="chat-input" placeholder="输入你的需求...">
+    <button onclick="sendMessage()">发送</button>
+  </div>
+</div>
+
+<!-- Page 2: Destination Recommendations -->
+<div class="page" id="page-recommend">
+  <div class="status-bar"><span class="status-dot"></span>已为您找到 3 个推荐目的地</div>
+  <div class="chat-area">
+    <div class="msg msg-agent">根据你的需求（海边、人少、可潜水、预算5000），我为你找到了以下目的地：</div>
+    <div class="card-group">
+      <div class="dest-card">
+        <h3>三亚 · 蜈支洲岛</h3>
+        <p class="reason">国内顶级潜水点，五一人流相对分散，海水能见度高</p>
+        <div class="card-info">
+          <div class="card-info-item"><span class="label">天气</span><span class="value">26-32°C 晴</span></div>
+          <div class="card-info-item"><span class="label">交通</span><span class="value">飞机 3.5h</span></div>
+          <div class="card-info-item"><span class="label">机票参考</span><span class="value">¥680 经济舱</span></div>
+          <div class="card-info-item"><span class="label">酒店均价</span><span class="value">¥350/晚</span></div>
+        </div>
+        <div class="card-total">预估总费用：¥3800 - ¥4500</div>
+        <button class="btn-select" onclick="selectDest('三亚')">选择这个</button>
+      </div>
+      <div class="dest-card">
+        <h3>涠洲岛 · 北海</h3>
+        <p class="reason">小众海岛，游客少，火山岩潜水体验独特，性价比高</p>
+        <div class="card-info">
+          <div class="card-info-item"><span class="label">天气</span><span class="value">24-30°C 多云</span></div>
+          <div class="card-info-item"><span class="label">交通</span><span class="value">飞机+船 5h</span></div>
+          <div class="card-info-item"><span class="label">机票参考</span><span class="value">¥520 经济舱</span></div>
+          <div class="card-info-item"><span class="label">酒店均价</span><span class="value">¥260/晚</span></div>
+        </div>
+        <div class="card-total">预估总费用：¥3200 - ¥3800</div>
+        <button class="btn-select" onclick="selectDest('涠洲岛')">选择这个</button>
+      </div>
+      <div class="dest-card">
+        <h3>万宁 · 日月湾</h3>
+        <p class="reason">冲浪胜地，人少清净，浮潜资源丰富，消费低于三亚</p>
+        <div class="card-info">
+          <div class="card-info-item"><span class="label">天气</span><span class="value">25-31°C 晴</span></div>
+          <div class="card-info-item"><span class="label">交通</span><span class="value">高铁 10h</span></div>
+          <div class="card-info-item"><span class="label">高铁参考</span><span class="value">¥620 二等座</span></div>
+          <div class="card-info-item"><span class="label">酒店均价</span><span class="value">¥280/晚</span></div>
+        </div>
+        <div class="card-total">预估总费用：¥3000 - ¥3600</div>
+        <button class="btn-select" onclick="selectDest('万宁')">选择这个</button>
+      </div>
+    </div>
+    <div class="msg msg-agent" style="margin-top:8px;">点击"选择这个"确认目的地，我会为你生成详细行程。</div>
+  </div>
+  <div class="input-bar">
+    <input type="text" placeholder="或输入其他想法...">
+    <button>发送</button>
+  </div>
+</div>
+
+<!-- Page 3: Itinerary -->
+<div class="page" id="page-itinerary">
+  <div class="status-bar"><span class="status-dot"></span>三亚行程已生成，请确认</div>
+  <div class="itinerary-container">
+    <div class="timeline">
+      <!-- Outbound -->
+      <div class="timeline-item transport">
+        <div class="tl-card">
+          <h4>去程交通</h4>
+          <p>CA1831 北京首都 → 三亚凤凰</p>
+          <p>5月1日 07:30 - 11:00（3.5小时）</p>
+          <p class="price">¥680 经济舱</p>
+        </div>
+      </div>
+      <!-- Hotel -->
+      <div class="timeline-item hotel">
+        <div class="tl-card">
+          <h4>住宿</h4>
+          <p>三亚湾海景度假酒店</p>
+          <p>海景大床房 · 4晚（5.1-5.4）</p>
+          <p>距蜈支洲岛码头15分钟车程</p>
+          <p class="price">¥350/晚 × 4 = ¥1400</p>
+        </div>
+      </div>
+      <!-- Day 1 -->
+      <div class="timeline-item">
+        <div class="tl-card">
+          <div class="day-title">Day 1 · 5月1日 - 抵达休整</div>
+          <ul class="activity-list">
+            <li><span>11:00 抵达三亚凤凰机场</span></li>
+            <li><span>12:00 酒店入住 + 午餐</span></li>
+            <li><span>15:00 三亚湾沙滩漫步</span><span>免费</span></li>
+            <li><span>18:00 第一市场海鲜晚餐</span><span>¥150</span></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Day 2 -->
+      <div class="timeline-item">
+        <div class="tl-card">
+          <div class="day-title">Day 2 · 5月2日 - 蜈支洲岛潜水</div>
+          <ul class="activity-list">
+            <li><span>08:00 前往蜈支洲岛码头</span><span>打车¥40</span></li>
+            <li><span>09:30 体验潜水（含教练）</span><span>¥580</span></li>
+            <li><span>14:00 环岛游览 + 海滩</span><span>门票¥144</span></li>
+            <li><span>17:00 返回酒店休息</span></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Day 3 -->
+      <div class="timeline-item">
+        <div class="tl-card">
+          <div class="day-title">Day 3 · 5月3日 - 亚龙湾探索</div>
+          <ul class="activity-list">
+            <li><span>09:00 亚龙湾热带天堂森林公园</span><span>¥158</span></li>
+            <li><span>13:00 亚龙湾沙滩浮潜</span><span>¥120</span></li>
+            <li><span>17:00 椰梦长廊日落</span><span>免费</span></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Day 4 -->
+      <div class="timeline-item">
+        <div class="tl-card">
+          <div class="day-title">Day 4 · 5月4日 - 自由活动</div>
+          <ul class="activity-list">
+            <li><span>09:00 南山文化旅游区</span><span>¥129</span></li>
+            <li><span>14:00 免税店购物</span></li>
+            <li><span>18:00 海边烧烤晚餐</span><span>¥100</span></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Return -->
+      <div class="timeline-item transport">
+        <div class="tl-card">
+          <h4>返程交通</h4>
+          <p>CA1832 三亚凤凰 → 北京首都</p>
+          <p>5月5日 14:00 - 17:30（3.5小时）</p>
+          <p class="price">¥720 经济舱</p>
+        </div>
+      </div>
+    </div>
+    <!-- Cost Summary -->
+    <div class="cost-summary">
+      <h4>费用汇总</h4>
+      <div class="cost-row"><span>去程机票</span><span>¥680</span></div>
+      <div class="cost-row"><span>返程机票</span><span>¥720</span></div>
+      <div class="cost-row"><span>住宿（4晚）</span><span>¥1400</span></div>
+      <div class="cost-row"><span>景点门票</span><span>¥1131</span></div>
+      <div class="cost-row"><span>餐饮交通</span><span>¥500</span></div>
+      <div class="cost-row total"><span>合计</span><span>¥4431</span></div>
+    </div>
+  </div>
+  <div class="action-buttons">
+    <button class="btn-secondary" onclick="showTab('recommend')">我要修改</button>
+    <button class="btn-primary" onclick="showTab('booking')">确认行程</button>
+  </div>
+</div>
+
+<!-- Page 4: Booking Guide -->
+<div class="page" id="page-booking">
+  <div class="status-bar"><span class="status-dot"></span>预订引导中 - 请逐项完成预订</div>
+  <div class="booking-container">
+    <div class="progress-bar"><div class="progress-fill" id="booking-progress" style="width:25%"></div></div>
+    <p class="progress-text" id="progress-text">1/4 已完成</p>
+
+    <div class="booking-item done" id="bk-1">
+      <h4><span class="check-icon">&#10003;</span> 去程机票</h4>
+      <p class="detail">CA1831 北京→三亚 5月1日 07:30 · ¥680</p>
+      <span class="status-badge badge-done">已预订</span>
+    </div>
+
+    <div class="booking-item current" id="bk-2">
+      <h4>住宿预订</h4>
+      <p class="detail">三亚湾海景度假酒店 · 海景大床房 · 4晚 · ¥1400</p>
+      <span class="status-badge badge-pending">待预订</span>
+      <div class="booking-actions">
+        <button class="btn-book" onclick="openBookingLink()">去携程预订</button>
+        <button class="btn-paid" onclick="markPaid(2)">已支付</button>
+        <button class="btn-skip" onclick="markSkip(2)">跳过</button>
+      </div>
+    </div>
+
+    <div class="booking-item" id="bk-3">
+      <h4>返程机票</h4>
+      <p class="detail">CA1832 三亚→北京 5月5日 14:00 · ¥720</p>
+      <span class="status-badge badge-pending">待预订</span>
+    </div>
+
+    <div class="booking-item" id="bk-4">
+      <h4>蜈支洲岛门票+潜水</h4>
+      <p class="detail">5月2日 · 门票¥144 + 潜水¥580 · 合计¥724</p>
+      <span class="status-badge badge-pending">待预订</span>
+    </div>
+  </div>
+</div>
+
+<!-- Page 5: Booking Complete -->
+<div class="page" id="page-complete">
+  <div class="status-bar" style="background:linear-gradient(135deg,#10b981,#34d399)"><span class="status-dot"></span>行程规划完成</div>
+  <div class="complete-container">
+    <div class="complete-icon">&#9992;</div>
+    <h2 class="complete-title">三亚之旅 预订完成!</h2>
+    <p class="complete-subtitle">以下是你的预订汇总，祝旅途愉快</p>
+
+    <div class="summary-list">
+      <div class="summary-item">
+        <span class="name"><span class="check-icon">&#10003;</span> 去程机票 CA1831</span>
+        <span class="cost">¥680</span>
+      </div>
+      <div class="summary-item">
+        <span class="name"><span class="check-icon">&#10003;</span> 三亚湾海景酒店 4晚</span>
+        <span class="cost">¥1400</span>
+      </div>
+      <div class="summary-item">
+        <span class="name"><span class="check-icon">&#10003;</span> 返程机票 CA1832</span>
+        <span class="cost">¥720</span>
+      </div>
+      <div class="summary-item">
+        <span class="name"><span class="skip-icon">-</span> 蜈支洲岛门票+潜水</span>
+        <span class="cost" style="color:#94a3b8">已跳过</span>
+      </div>
+    </div>
+
+    <div class="total-box">
+      <div class="label">实际已预订总花费</div>
+      <div class="amount">¥2800</div>
+    </div>
+
+    <button class="btn-primary" style="width:100%" onclick="resetAll()">完成</button>
+  </div>
+</div>
+
+<script>
+// Tab switching
+const tabBtns = document.querySelectorAll('.tab-btn');
+const pages = document.querySelectorAll('.page');
+
+function showTab(tabId) {
+  tabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+  pages.forEach(page => page.classList.toggle('active', page.id === 'page-' + tabId));
+}
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => showTab(btn.dataset.tab));
+});
+
+// Chat send message
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const chatArea = document.getElementById('chat-messages');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg msg-user';
+  userMsg.textContent = text;
+  chatArea.appendChild(userMsg);
+  input.value = '';
+  setTimeout(() => {
+    const agentMsg = document.createElement('div');
+    agentMsg.className = 'msg msg-agent';
+    agentMsg.textContent = '收到！让我为你查找合适的目的地...';
+    chatArea.appendChild(agentMsg);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    setTimeout(() => showTab('recommend'), 1500);
+  }, 800);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+document.getElementById('chat-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') sendMessage();
+});
+
+// Select destination
+function selectDest(name) {
+  alert('已选择：' + name + '，正在生成详细行程...');
+  setTimeout(() => showTab('itinerary'), 500);
+}
+
+// Booking actions
+function openBookingLink() {
+  alert('模拟跳转到携程预订页面...\n\n实际使用时将打开预填好参数的携程链接');
+}
+
+function markPaid(index) {
+  const item = document.getElementById('bk-' + index);
+  item.className = 'booking-item done';
+  item.querySelector('.status-badge').className = 'status-badge badge-done';
+  item.querySelector('.status-badge').textContent = '已预订';
+  const actions = item.querySelector('.booking-actions');
+  if (actions) actions.remove();
+  // Activate next
+  const next = document.getElementById('bk-' + (index + 1));
+  if (next && !next.classList.contains('done')) {
+    next.className = 'booking-item current';
+    const actionsHtml = '<div class="booking-actions"><button class="btn-book" onclick="openBookingLink()">去携程预订</button><button class="btn-paid" onclick="markPaid(' + (index+1) + ')">已支付</button><button class="btn-skip" onclick="markSkip(' + (index+1) + ')">跳过</button></div>';
+    next.insertAdjacentHTML('beforeend', actionsHtml);
+  }
+  updateProgress();
+}
+
+function markSkip(index) {
+  const item = document.getElementById('bk-' + index);
+  item.className = 'booking-item skipped';
+  item.querySelector('.status-badge').className = 'status-badge badge-skipped';
+  item.querySelector('.status-badge').textContent = '已跳过';
+  const actions = item.querySelector('.booking-actions');
+  if (actions) actions.remove();
+  const next = document.getElementById('bk-' + (index + 1));
+  if (next && !next.classList.contains('done') && !next.classList.contains('skipped')) {
+    next.className = 'booking-item current';
+    const actionsHtml = '<div class="booking-actions"><button class="btn-book" onclick="openBookingLink()">去携程预订</button><button class="btn-paid" onclick="markPaid(' + (index+1) + ')">已支付</button><button class="btn-skip" onclick="markSkip(' + (index+1) + ')">跳过</button></div>';
+    next.insertAdjacentHTML('beforeend', actionsHtml);
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const items = document.querySelectorAll('.booking-item');
+  let done = 0;
+  let allDone = true;
+  items.forEach(item => {
+    if (item.classList.contains('done') || item.classList.contains('skipped')) done++;
+    else allDone = false;
+  });
+  const pct = Math.round((done / items.length) * 100);
+  document.getElementById('booking-progress').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = done + '/' + items.length + ' 已完成';
+  if (allDone) {
+    setTimeout(() => showTab('complete'), 800);
+  }
+}
+
+function resetAll() {
+  showTab('chat');
+}
+</script>
+</body>
+</html>

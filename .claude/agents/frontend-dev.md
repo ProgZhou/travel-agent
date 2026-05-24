@@ -1,7 +1,7 @@
 ---
 name: frontend-dev
 description: 前端开发工程师，负责根据设计文档和产品原型实现前端代码。当需要前端页面开发、组件实现、状态管理、API对接时调用。
-tools: Read, Write, Edit, Glob, Grep
+tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
 

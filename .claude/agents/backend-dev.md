@@ -1,7 +1,8 @@
 ---
 name: backend-dev
 description: 后端开发工程师，负责根据设计文档和接口规格实现后端 API、业务逻辑和数据库操作。当需要后端开发、API实现、数据库迁移时调用。
-tools: Read, Write, Edit, Glob, Grep
+tools: Read, Write, Edit, Glob, Grep, Bash
+model: sonnet
 ---
 
 # 后端开发工程师

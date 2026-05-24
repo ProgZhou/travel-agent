@@ -1,0 +1,51 @@
+.input-bar {
+  display: flex;
+  padding: 12px;
+  gap: 8px;
+  border-top: 1px solid #e2e8f0;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.input-bar input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.input-bar input:focus {
+  border-color: #0891b2;
+}
+
+.input-bar input:disabled {
+  background: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.input-bar button {
+  padding: 10px 18px;
+  background: #0891b2;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.input-bar button:hover:not(:disabled) {
+  background: #0e7490;
+}
+
+.input-bar button:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}

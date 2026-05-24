@@ -1,0 +1,171 @@
+.itinerary-timeline {
+  position: relative;
+  padding-left: 24px;
+}
+
+.itinerary-timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e2e8f0;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #0891b2;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #0891b2;
+}
+
+.timeline-item--transport::before {
+  background: #f59e0b;
+  box-shadow: 0 0 0 2px #f59e0b;
+}
+
+.timeline-item--hotel::before {
+  background: #8b5cf6;
+  box-shadow: 0 0 0 2px #8b5cf6;
+}
+
+.timeline-card {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.timeline-card h4 {
+  font-size: 14px;
+  color: #1e293b;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.timeline-card p {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.timeline-card .price {
+  color: #0891b2;
+  font-weight: 600;
+}
+
+.day-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activity-list li {
+  font-size: 13px;
+  color: #475569;
+  padding: 6px 0;
+  border-bottom: 1px dashed #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.activity-list li:last-child {
+  border-bottom: none;
+}
+
+.cost-summary {
+  background: linear-gradient(135deg, #f0fdfa, #ecfeff);
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 16px;
+  border: 1px solid #a7f3d0;
+}
+
+.cost-summary h4 {
+  font-size: 14px;
+  color: #0e7490;
+  margin-bottom: 8px;
+}
+
+.cost-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+  color: #475569;
+}
+
+.cost-row--total {
+  font-weight: 700;
+  color: #0e7490;
+  font-size: 15px;
+  border-top: 1px solid #a7f3d0;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  padding: 16px;
+  border-top: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.btn-primary {
+  flex: 1;
+  padding: 12px;
+  background: #0891b2;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #0e7490;
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 12px;
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+}

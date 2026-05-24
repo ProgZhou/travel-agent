@@ -1,0 +1,131 @@
+.booking-progress {
+  margin-bottom: 16px;
+}
+
+.progress-bar {
+  background: #e2e8f0;
+  border-radius: 8px;
+  height: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0891b2, #06b6d4);
+  border-radius: 8px;
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.booking-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  transition: all 0.3s;
+}
+
+.booking-item--current {
+  border-color: #0891b2;
+  background: #ecfeff;
+  box-shadow: 0 2px 12px rgba(8, 145, 178, 0.1);
+}
+
+.booking-item--done {
+  border-color: #a7f3d0;
+  background: #f0fdf4;
+}
+
+.booking-item--skipped {
+  opacity: 0.6;
+}
+
+.booking-item h4 {
+  font-size: 14px;
+  color: #1e293b;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.booking-item .detail {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-badge--pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge--done {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge--skipped {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.booking-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.booking-actions button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.btn-book {
+  background: #0891b2;
+  color: #fff;
+}
+
+.btn-book:hover {
+  background: #0e7490;
+}
+
+.btn-paid {
+  background: #10b981;
+  color: #fff;
+}
+
+.btn-paid:hover {
+  background: #059669;
+}
+
+.btn-skip {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.btn-skip:hover {
+  background: #e2e8f0;
+}

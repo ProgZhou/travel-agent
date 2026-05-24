@@ -1,7 +1,7 @@
 ---
 name: test-designer
 description: 测试设计师，负责基于产品需求和技术设计制定完整的测试方案、设计高覆盖测试用例。当需要测试策略、用例设计、质量门禁时调用。
-tools: Read, Write, Edit, Glob, Grep
+tools: Read, Write, Edit, Glob, Grep, Bash
 model: opus
 ---
 

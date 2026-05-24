@@ -36,10 +36,15 @@
     },
     "permissions": {
         "allow": [
-            "Bash(git:*)",
+            "Bash(git status)",
+            "Bash(git diff)",
             "Bash(pnpm test:*)",
             "Bash(prettier:*)",
-            "Bash(eslint:*)"
+            "Bash(eslint:*)",
+            "Bash(mkdir:*)",
+            "Bash(cat *)",
+            "Bash(ls:*)",
+            "Bash(cd *)"
         ],
         "ask": [
             "Bash(rm:*)",

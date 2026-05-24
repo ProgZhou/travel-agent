@@ -1,0 +1,95 @@
+.dest-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s;
+  animation: fadeIn 0.3s ease;
+}
+
+.dest-card:hover {
+  box-shadow: 0 4px 16px rgba(8, 145, 178, 0.12);
+}
+
+.dest-card__title {
+  font-size: 16px;
+  color: #0e7490;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.dest-card__reason {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.dest-card__info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.dest-card__info-item {
+  background: #f8fafc;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.dest-card__info-item .label {
+  color: #94a3b8;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.dest-card__info-item .value {
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.dest-card__total {
+  background: #f0fdfa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0e7490;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mock-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.dest-card__btn {
+  width: 100%;
+  padding: 10px;
+  background: #0891b2;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.dest-card__btn:hover {
+  background: #0e7490;
+}

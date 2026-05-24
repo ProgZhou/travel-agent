@@ -1,0 +1,46 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+  cors_origins:
+    - "http://localhost:5173"
+
+llm:
+  provider: "doubao"
+  api_url: "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
+  # api_key 通过环境变量 ARK_API_KEY 注入，不要在此填写真实 Key
+  model: "doubao-seed-2-0-lite-260428"
+  max_tokens: 4096
+  temperature: 0.7
+  timeout: 30s
+  max_retries: 2
+  retry_interval: 3s
+
+engine:
+  max_react_iterations: 10
+  planner_model: "doubao-seed-2-0-lite-260428"
+
+tools:
+  flight:
+    provider_type: "mock"
+    timeout: 5s
+    retry_count: 1
+    retry_interval: 2s
+  hotel:
+    provider_type: "mock"
+    timeout: 5s
+    retry_count: 1
+    retry_interval: 2s
+  weather:
+    provider_type: "mock"
+    timeout: 5s
+    retry_count: 1
+    retry_interval: 2s
+
+session:
+  store_type: "memory"
+  max_sessions: 100
+  ttl: 24h
+
+log:
+  level: "info"
+  format: "text"

@@ -1,0 +1,56 @@
+# 旅行规划 Agent 配置文件示例
+# 复制此文件为 config.yaml 并根据需要修改
+
+# HTTP 服务器配置
+server:
+  host: "0.0.0.0"           # 监听地址
+  port: 8080                # 监听端口
+  cors_origins:             # CORS 允许的源
+    - "http://localhost:5173"  # 前端开发服务器
+    - "http://localhost:3000"  # 备选前端地址
+
+# LLM 配置（豆包大模型）
+llm:
+  provider: "doubao"        # LLM 提供商
+  api_url: "https://ark.cn-beijing.volces.com/api/v3/chat/completions"  # API 端点
+  api_key: "0dd386ea-afd4-45f1-a7da-efb3dc2e6df7"  # API Key（也可通过环境变量 ARK_API_KEY 注入）
+  model: "doubao-seed-2-0-lite-260428"  # 模型名称
+  max_tokens: 4096          # 最大生成 token 数
+  temperature: 0.7          # 温度参数（0-1，越高越随机）
+  timeout: 30s              # 请求超时时间
+  max_retries: 2            # 最大重试次数
+  retry_interval: 3s        # 重试间隔
+
+# Agent Engine 配置
+engine:
+  max_react_iterations: 10  # ReAct 循环最大迭代次数
+  planner_model: "doubao-seed-2-0-lite-260428"  # Planner 使用的模型
+
+# 工具配置
+tools:
+  flight:                   # 航班/火车查询工具
+    provider_type: "mock"   # 数据源类型：mock（模拟）或 real（真实 API）
+    timeout: 5s             # 调用超时
+    retry_count: 1          # 重试次数
+    retry_interval: 2s      # 重试间隔
+  hotel:                    # 酒店查询工具
+    provider_type: "mock"
+    timeout: 5s
+    retry_count: 1
+    retry_interval: 2s
+  weather:                  # 天气查询工具
+    provider_type: "mock"
+    timeout: 5s
+    retry_count: 1
+    retry_interval: 2s
+
+# 会话存储配置
+session:
+  store_type: "memory"      # 存储类型：memory（内存）或 sqlite（未来支持）
+  max_sessions: 100         # 最大会话数
+  ttl: 24h                  # 会话过期时间
+
+# 日志配置
+log:
+  level: "info"             # 日志级别：debug, info, warn, error
+  format: "text"            # 日志格式：text 或 json
